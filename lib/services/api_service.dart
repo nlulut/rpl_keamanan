@@ -1,12 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
-
 import '../config/app_config.dart';
 import '../models/user.dart';
+import '../models/post.dart';
 
 /// Exception dengan pesan yang aman ditampilkan ke pengguna.
 ///
@@ -45,6 +44,36 @@ class ApiService {
           .toList();
     });
   }
+
+  Future<List<Post>> getPosts() async {
+    try {
+      _log('GET /posts');
+      final response = await _client
+          .get(
+            Uri.parse('$_baseUrl/posts'),
+            headers: _buildHeaders(),
+          )
+          .timeout(Duration(seconds: AppConfig.timeoutSeconds));
+
+      _log('Response status: ${response.statusCode}');
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        return data.map((json) => Post.fromJson(json)).toList();
+      } else {
+        throw Exception('Gagal memuat posts. Status: ${response.statusCode}');
+      }
+    } on TimeoutException {
+      throw Exception('Request timeout. Periksa koneksi internet Anda.');
+    } on SocketException {
+      throw Exception('Tidak ada koneksi internet. Periksa jaringan Anda.');
+    } on FormatException {
+      throw Exception('Format data tidak valid.');
+    } catch (e) {
+      throw Exception('Terjadi kesalahan: $e');
+    }
+  }
+
 
   /// Mengambil pengguna berdasarkan [id].
   ///

@@ -60,6 +60,54 @@ class Validators {
     return null;
   }
 
+  /// Validasi nomor telepon (hanya angka, 10-13 digit)
+  static String? validatePhone(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Nomor telepon tidak boleh kosong';
+    }
+  
+    final phoneRegex = RegExp(r'^[0-9]{10,13}$');
+    if (!phoneRegex.hasMatch(value)) {
+      return 'Nomor telepon harus berupa 10-13 digit angka';
+    }
+    return null; 
+  }
+
+  /// Validasi URL (harus dimulai dengan http:// atau https://)
+  static String? validateUrl(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'URL tidak boleh kosong';
+    }
+
+    final urlRegex = RegExp(r'^https?://.+');
+    if (!urlRegex.hasMatch(value)) {
+      return 'URL harus dimulai dengan http:// atau https://';
+    }
+    return null; 
+  }
+
+  /// Validasi password (minimal 8 karakter, ada huruf kapital, angka, dan simbol)
+  static String? validatePassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Password tidak boleh kosong';
+    }
+    if (value.length < 8) {
+      return 'Password minimal 8 karakter';
+    }
+    if (!RegExp(r'[A-Z]').hasMatch(value)) {
+      return 'Password harus mengandung minimal 1 huruf kapital';
+    }
+
+    if (!RegExp(r'[0-9]').hasMatch(value)) {
+      return 'Password harus mengandung minimal 1 angka';
+    }
+    
+    if (!RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(value)) {
+      return 'Password harus mengandung minimal 1 simbol';
+    }
+    return null; 
+  }
+
   /// Memvalidasi email.
   ///
   /// Mengembalikan pesan error jika tidak valid, atau `null` jika valid.
